@@ -1,0 +1,5 @@
+youtube:
+  channel_id: "UCtoNXlIegvxkvf5Ji8S57Ag" # Lore So What Channel ID
+  check_interval_seconds: 86400   # 1일마다 확인
+
+# LLM settings removed as we are generating prompts for manual copy-paste
