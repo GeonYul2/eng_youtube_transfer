@@ -10,7 +10,7 @@ Generated DAG: pipeline__eng_youtube_transfer
 
 우리가 하려는 일은 두 가지예요:
 1. 유튜브에서 새로운 영상을 찾아오기 (fetch_videos)
-2. 가장 최신 영상을 가져와서 요약하기 (process_latest_video)
+2. 가장 최신 영상의 **전체 대본(Full Script)**을 가져오기 (process_latest_video)
 
 자, 이제 코드를 하나씩 살펴볼까요?
 """
@@ -69,16 +69,17 @@ with DAG(
         op_kwargs={"channel_id": "UCtoNXlIegvxkvf5Ji8S57Ag", "limit": 3},
     )
 
-    # 두 번째 로봇: 영상 요약하기 대장
+    # 두 번째 로봇: 대본(스크립트) 추출하기 대장
     process_latest_video = PythonOperator(
         task_id="process_latest_video", # 이 로봇의 이름표예요.
         
         # "eng_youtube.video_ops.process_video_pipeline" 책에 적힌 대로 영상을 처리해요.
+        # 영상의 **전체 대본(Full Script)**을 다운로드 받아서 파일로 저장해줘요!
         python_callable=lambda: print(
             "Executing eng_youtube.video_ops.process_video_pipeline"
         ),
         
-        # "이 비디오(video_12345)를 처리해!" 라고 알려줬어요.
+        # "이 비디오(video_12345)의 대본을 뽑아줘!" 라고 알려줬어요.
         # (나중에는 첫 번째 로봇이 찾아온 비디오를 자동으로 넘겨받게 될 거예요!)
         op_kwargs={"video_id": "video_12345"},
     )
@@ -89,7 +90,7 @@ with DAG(
     # 여기가 제일 중요해요! 로봇들이 동시에 우루루 나가면 엉망이 되겠죠?
     # ">>" 화살표가 순서를 알려줘요.
     
-    # "영상 찾아오기(fetch_videos)"가 먼저 끝나야 -> "영상 요약하기(process_latest_video)"를 시작해요.
-    # 만약 영상을 못 찾아오면? 요약하는 로봇은 시작도 안 하고 기다릴 거예요.
+    # "영상 찾아오기(fetch_videos)"가 먼저 끝나야 -> "대본 추출하기(process_latest_video)"를 시작해요.
+    # 만약 영상을 못 찾아오면? 대본 뽑는 로봇은 시작도 안 하고 기다릴 거예요.
     
     fetch_videos >> process_latest_video
